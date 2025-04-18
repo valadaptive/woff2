@@ -7,7 +7,7 @@
 # several CI services, such as Travis and Drone, use it.  Solaris 11
 # has 2.8.6, and it's not difficult to support if you already have to
 # support 2.8.7.
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 3.9)
 
 project(woff2)
 
@@ -96,11 +96,16 @@ target_link_libraries(woff2_compress woff2enc)
 add_executable(woff2_info src/woff2_info.cc)
 target_link_libraries(woff2_info woff2common)
 
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported)
 foreach(lib woff2common woff2dec woff2enc)
   set_target_properties(${lib} PROPERTIES
     SOVERSION ${WOFF2_VERSION}
     VERSION ${WOFF2_VERSION}
     POSITION_INDEPENDENT_CODE TRUE)
+  if(ipo_supported)
+    set_property(TARGET ${lib} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+  endif()
 endforeach()
 
 # Fuzzer libraries
