@@ -31,16 +31,15 @@ if ("${isSystemDir}" STREQUAL "-1")
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}")
 endif()
 
-# Find Brotli dependencies
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-find_package(BrotliDec)
-if (NOT BROTLIDEC_FOUND)
-    message(FATAL_ERROR "librotlidec is needed to build woff2.")
-endif ()
-find_package(BrotliEnc)
-if (NOT BROTLIENC_FOUND)
-    message(FATAL_ERROR "librotlienc is needed to build woff2.")
-endif ()
+# Brotli from subdirectory
+option(BROTLI_DISABLE_TESTS "Disable brotli tests" ON)
+set(BROTLI_BUNDLED_MODE ON)
+set(BROTLI_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+add_subdirectory(brotli)
+set(BROTLIDEC_INCLUDE_DIRS ${BROTLI_INCLUDE_DIRS})
+set(BROTLIENC_INCLUDE_DIRS ${BROTLI_INCLUDE_DIRS})
+set(BROTLIDEC_LIBRARIES brotlidec brotlicommon)
+set(BROTLIENC_LIBRARIES brotlienc brotlicommon)
 
 # Set compiler flags
 if (NOT CANONICAL_PREFIXES)
