@@ -17,6 +17,13 @@ option(NOISY_LOGGING "Noisy logging" ON)
 # Version information
 set(WOFF2_VERSION 1.0.2)
 
+# Enable interprocedural optimization if supported
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported)
+if(ipo_supported)
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+
 # When building shared libraries it is important to set the correct rpath
 # See https://cmake.org/Wiki/CMake_RPATH_handling#Always_full_RPATH
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -91,16 +98,11 @@ target_link_libraries(woff2_compress woff2enc)
 add_executable(woff2_info src/woff2_info.cc)
 target_link_libraries(woff2_info woff2common)
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT ipo_supported)
 foreach(lib woff2common woff2dec woff2enc)
   set_target_properties(${lib} PROPERTIES
     SOVERSION ${WOFF2_VERSION}
     VERSION ${WOFF2_VERSION}
     POSITION_INDEPENDENT_CODE TRUE)
-  if(ipo_supported)
-    set_property(TARGET ${lib} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-  endif()
 endforeach()
 
 # Fuzzer libraries
