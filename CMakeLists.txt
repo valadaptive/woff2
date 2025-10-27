@@ -38,6 +38,20 @@ endif()
 option(BROTLI_DISABLE_TESTS "Disable brotli tests" ON)
 set(BROTLI_BUNDLED_MODE ON)
 set(BROTLI_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+
+# Brotli static initialization mode
+set(BROTLI_STATIC_INIT "NONE" CACHE STRING "Brotli static initialization mode")
+set_property(CACHE BROTLI_STATIC_INIT PROPERTY STRINGS "NONE" "EARLY" "LAZY")
+
+# Map the enum to numeric values
+set(_init_modes "NONE" "EARLY" "LAZY")
+list(FIND _init_modes "${BROTLI_STATIC_INIT}" BROTLI_STATIC_INIT_VALUE)
+if(BROTLI_STATIC_INIT_VALUE LESS 0)
+  message(FATAL_ERROR "Invalid BROTLI_STATIC_INIT: ${BROTLI_STATIC_INIT}")
+endif()
+
+add_compile_definitions(BROTLI_STATIC_INIT=${BROTLI_STATIC_INIT_VALUE})
+
 add_subdirectory(brotli)
 set(BROTLIDEC_INCLUDE_DIRS ${BROTLI_INCLUDE_DIRS})
 set(BROTLIENC_INCLUDE_DIRS ${BROTLI_INCLUDE_DIRS})
