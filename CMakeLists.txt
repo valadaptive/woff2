@@ -54,12 +54,12 @@ set(COMMON_FLAGS -fno-omit-frame-pointer)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-DOS_MACOSX)
 else ()
-    set(COMMON_FLAGS "${COMMON_FLAG} -fno-omit-frame-pointer")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-omit-frame-pointer")
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAG}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAG}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS}")
 set(CMAKE_CXX_STANDARD 11)
 
 # Set search path for our private/public headers as well as Brotli headers
